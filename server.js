@@ -14,11 +14,6 @@ app.use(corsMiddleware);
 // JSON body parsing middleware
 app.use(express.json());
 
-// API routes
-app.use("/api/auth", authRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/expenses", expenseRoutes);
-
 // --- Database Connection Handling (Vercel serverless friendly) ---
 let isConnected = false; // track connection state
 
@@ -26,8 +21,7 @@ async function connectDB() {
   if (isConnected) return;
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useNewUrlParser: true, // ✅ only this is needed now
     });
     isConnected = true;
     console.log("✅ MongoDB connected");
@@ -40,6 +34,20 @@ async function connectDB() {
 app.use(async (req, res, next) => {
   await connectDB();
   next();
+});
+
+// --- API routes ---
+app.use("/api/auth", authRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/expenses", expenseRoutes);
+
+// --- Root + favicon handlers ---
+app.get("/", (req, res) => {
+  res.send("🚀 Penny Path API is running. Try /api/auth, /api/categories, or /api/expenses");
+});
+
+app.get(["/favicon.ico", "/favicon.png"], (req, res) => {
+  res.status(204).end(); // No Content
 });
 
 // --- Export Express app for Vercel (no app.listen) ---
