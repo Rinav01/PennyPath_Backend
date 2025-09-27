@@ -79,36 +79,6 @@ PennyPath is a robust and scalable backend solution for an expense tracking appl
     }
     ```
 
-- **`POST /api/auth/forgot-password`**
-  - **Description:** Sends a password reset token to the user's email.
-  - **Request Body:**
-    ```json
-    {
-      "email": "user@example.com"
-    }
-    ```
-  - **Response:**
-    ```json
-    {
-      "message": "Password reset token sent to your email"
-    }
-    ```
-
-- **`POST /api/auth/reset-password/:token`**
-  - **Description:** Resets the user's password.
-  - **Request Body:**
-    ```json
-    {
-      "password": "newpassword"
-    }
-    ```
-  - **Response:**
-    ```json
-    {
-      "message": "Password has been reset"
-    }
-    ```
-
 ### Categories
 
 - **`POST /api/categories/create`**

@@ -1,29 +1,46 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const authRoutes = require('./routes/auth');
-const categoryRoutes = require('./routes/categories');
-const expenseRoutes = require('./routes/expenses');
-const corsMiddleware = require('./middleware/cors');
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const authRoutes = require("./routes/auth");
+const categoryRoutes = require("./routes/categories");
+const expenseRoutes = require("./routes/expenses");
+const corsMiddleware = require("./middleware/cors");
 
 const app = express();
 
-// Enable CORS for all routes
+// Enable CORS
 app.use(corsMiddleware);
 
 // JSON body parsing middleware
 app.use(express.json());
 
-// Mount API routes with proper prefixes
-app.use('/api/auth', authRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/expenses', expenseRoutes);
+// API routes
+app.use("/api/auth", authRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/expenses", expenseRoutes);
 
-// Connect to MongoDB and start server
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    app.listen(process.env.PORT || 3000, () => {
-      console.log('Server running on port', process.env.PORT || 3000);
+// --- Database Connection Handling (Vercel serverless friendly) ---
+let isConnected = false; // track connection state
+
+async function connectDB() {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
-  })
-  .catch(err => console.error('Connection error', err));
+    isConnected = true;
+    console.log("✅ MongoDB connected");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
+  }
+}
+
+// Ensure DB is connected before handling requests
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
+// --- Export Express app for Vercel (no app.listen) ---
+module.exports = app;
