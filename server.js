@@ -20,9 +20,7 @@ let isConnected = false; // track connection state
 async function connectDB() {
   if (isConnected) return;
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true, // ✅ only this is needed now
-    });
+    await mongoose.connect(process.env.MONGODB_URI); // ✅ no deprecated options
     isConnected = true;
     console.log("✅ MongoDB connected");
   } catch (err) {
@@ -36,6 +34,12 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// --- Global API logging middleware ---
+app.use("/api", (req, res, next) => {
+  console.log(`✅ API request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // --- API routes ---
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -43,11 +47,13 @@ app.use("/api/expenses", expenseRoutes);
 
 // --- Root + favicon handlers ---
 app.get("/", (req, res) => {
-  res.send("🚀 Penny Path API is running. Try /api/auth, /api/categories, or /api/expenses");
+  res.send(
+    "🚀 Penny Path API is running. Try /api/auth, /api/categories, or /api/expenses"
+  );
 });
 
 app.get(["/favicon.ico", "/favicon.png"], (req, res) => {
-  res.status(204).end(); // No Content
+  res.status(204).end(); // No Content, avoids 404 log spam
 });
 
 // --- Export Express app for Vercel (no app.listen) ---
