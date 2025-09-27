@@ -40,6 +40,30 @@ PennyPath is a robust and scalable backend solution for an expense tracking appl
     npm start
     ```
 
+## Deployment on Vercel
+
+This project is ready to be deployed on Vercel. You just need to create a `vercel.json` file with the following content:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "./server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/server.js"
+    }
+  ]
+}
+```
+
+And make sure to set the environment variables in the Vercel project settings.
+
 ## API Endpoints
 
 ### Authentication
