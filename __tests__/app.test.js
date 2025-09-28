@@ -47,7 +47,7 @@ describe('PennyPath API', () => {
   beforeEach(async () => {
     const userRes = await request(app)
       .post('/api/auth/signup')
-      .send({ email: 'test@example.com', password: 'password123' });
+      .send({ name: 'Test User', email: 'test@example.com', password: 'password123' });
     userId = userRes.body.userId;
 
     const loginRes = await request(app)
@@ -66,8 +66,16 @@ describe('PennyPath API', () => {
   it('should signup a new user', async () => {
     const res = await request(app)
       .post('/api/auth/signup')
-      .send({ email: 'test2@example.com', password: 'password123' });
+      .send({ name: 'Test User 2', email: 'test2@example.com', password: 'password123' });
     expect(res.statusCode).toEqual(201);
+  });
+
+  it('should login a user and return user name', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'test@example.com', password: 'password123' });
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('name', 'Test User');
   });
 
   // Categories

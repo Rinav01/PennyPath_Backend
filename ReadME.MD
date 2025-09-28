@@ -68,11 +68,10 @@ And make sure to set the environment variables in the Vercel project settings.
 
 ### Authentication
 
-- **`POST /api/auth/signup`**
-  - **Description:** Registers a new user.
   - **Request Body:**
     ```json
     {
+      "name": "John Doe",
       "email": "user@example.com",
       "password": "yourpassword"
     }
@@ -99,7 +98,8 @@ And make sure to set the environment variables in the Vercel project settings.
     {
       "message": "Login successful!",
       "token": "your_jwt_token",
-      "userId": "5f9f1b9b9b9b9b9b9b9b9b9b"
+      "userId": "5f9f1b9b9b9b9b9b9b9b9b9b",
+      "name": "John Doe"
     }
     ```
 
